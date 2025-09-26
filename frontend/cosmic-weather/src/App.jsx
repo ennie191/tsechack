@@ -321,7 +321,7 @@ function Shell() {
       `}</style>
 
       {/* Navigation Bar */}
-      <AppBar position="static" elevation={0}>
+      <AppBar position="sticky" elevation={0}>
         <Toolbar sx={{ py: 1 }}>
           {/* Logo */}
           <Stack direction="row" alignItems="center" spacing={2} sx={{ flexGrow: 1 }}>
