@@ -3,11 +3,6 @@ import { useState, useMemo } from 'react'
 import './App.css'
 import { AppProvider, useApp } from './context/AppContext'
 import Controls from './components/Controls'
-import ForecastCharts from './components/ForecastCharts'
-import PremiumCard from './components/PremiumCard'
-import LossChart from './components/LossChart'
-import ExplainPanel from './components/ExplainPanel'
-import { AlertsPanel, AlertsToasts } from './components/Alerts'
 import { 
   Box, 
   Container, 
@@ -194,6 +189,7 @@ function Shell() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [notificationsAnchor, setNotificationsAnchor] = useState(null)
   const [activeFeature, setActiveFeature] = useState('dashboard')
+  const [inputs, setInputs] = useState({ orbit: '', shielding: '', value: '' }) // <-- ADD THIS LINE
   const theme = useMemo(() => getTheme(darkMode), [darkMode])
 
   const handleNotificationsOpen = (event) => {
@@ -246,34 +242,187 @@ function Shell() {
   // Components to render for each section, can expand as needed
   const sectionComponents = {
     dashboard: (
-      <Box id="dashboard">
-        <Grid container spacing={3}>
-          {/* Forecast Charts - Left Side */}
-          <Grid item xs={12} lg={8}>
-            <ForecastCharts />
-          </Grid>
-
-          {/* Premium Card - Right Side */}
-          <Grid item xs={12} lg={4}>
-            <Stack spacing={3}>
-              <PremiumCard />
-            </Stack>
-          </Grid>
-
-          {/* Loss Chart & Explain Panel - Bottom */}
-          <Grid item xs={12} md={6}>
-            <LossChart />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <ExplainPanel />
-          </Grid>
-
-          {/* Alerts Panel - Full Width Bottom */}
-          <Grid item xs={12}>
-            <AlertsPanel />
-          </Grid>
-        </Grid>
-      </Box>
+      <Box id="dashboard" sx={{
+        py: 6,
+        display: 'flex',
+        flexDirection: { xs: 'column', md: 'row' },
+        gap: { xs: 6, md: 10 },
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+        width: '100%',
+      }}>
+        {/* Left: Asset Details Card */}
+        <Box sx={{
+          minWidth: 340,
+          maxWidth: 400,
+          bgcolor: 'rgba(36,40,59,0.98)',
+          borderRadius: 5,
+          boxShadow: '0 8px 32px rgba(79,70,229,0.10)',
+          p: { xs: 3, md: 4 },
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 4,
+          border: 'none',
+          backdropFilter: 'blur(6px)'
+        }}>
+          <Typography variant="h4" sx={{
+            color: '#f1f5f9',
+            fontWeight: 800,
+            mb: 3,
+            letterSpacing: 1,
+            fontFamily: '"Space Grotesk", sans-serif',
+          }}>
+            Asset Details
+          </Typography>
+          {/* Orbit Dropdown */}
+          <Box>
+            <Typography variant="subtitle2" sx={{ color: '#94a3b8', fontWeight: 600, mb: 1 }}>
+              Orbit
+            </Typography>
+            <Box sx={{
+              bgcolor: '#23233a',
+              borderRadius: 2,
+              boxShadow: '0 2px 8px rgba(79,70,229,0.08)',
+              p: 1,
+              mb: 2
+            }}>
+              <select
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  background: 'transparent',
+                  color: '#e5e7eb',
+                  fontSize: '1.1rem',
+                  fontWeight: 600,
+                  outline: 'none'
+                }}
+                value={inputs.orbit}
+                onChange={e => setInputs({ ...inputs, orbit: e.target.value })}
+              >
+                <option value="">Select Orbit</option>
+                <option value="LEO">Low Earth Orbit</option>
+                <option value="MEO">Medium Earth Orbit</option>
+                <option value="GEO">Geostationary Orbit</option>
+              </select>
+            </Box>
+          </Box>
+          {/* Shielding Slider */}
+          <Box>
+            <Typography variant="subtitle2" sx={{ color: '#94a3b8', fontWeight: 600, mb: 1 }}>
+              Shielding Level
+            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Typography variant="body2" sx={{ color: '#a78bfa', minWidth: 40 }}>Low</Typography>
+              <input
+                type="range"
+                min={1}
+                max={10}
+                step={1}
+                style={{
+                  flex: 1,
+                  accentColor: '#7c3aed',
+                  height: '4px',
+                  borderRadius: '2px'
+                }}
+                value={inputs.shielding || 1}
+                onChange={e => setInputs({ ...inputs, shielding: e.target.value })}
+              />
+              <Typography variant="body2" sx={{ color: '#a78bfa', minWidth: 40 }}>High</Typography>
+            </Box>
+            <Typography variant="caption" sx={{ color: '#7c3aed', fontWeight: 700, mt: 1 }}>
+              Level {inputs.shielding || 1}
+            </Typography>
+          </Box>
+          {/* Asset Value Slider */}
+          <Box>
+            <Typography variant="subtitle2" sx={{ color: '#94a3b8', fontWeight: 600, mb: 1 }}>
+              Asset Value (USD)
+            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Typography variant="body2" sx={{ color: '#f472b6', minWidth: 40 }}>$0</Typography>
+              <input
+                type="range"
+                min={0}
+                max={100000000}
+                step={100000}
+                style={{
+                  flex: 1,
+                  accentColor: '#f472b6',
+                  height: '4px',
+                  borderRadius: '2px'
+                }}
+                value={inputs.value || 0}
+                onChange={e => setInputs({ ...inputs, value: e.target.value })}
+              />
+              <Typography variant="body2" sx={{ color: '#f472b6', minWidth: 40 }}>$100M</Typography>
+            </Box>
+            <Typography variant="caption" sx={{ color: '#a78bfa', fontWeight: 700, mt: 1 }}>
+              ${Number(inputs.value || 0).toLocaleString()}
+            </Typography>
+          </Box>
+        </Box>
+        {/* Right: Results & Graphs stacked vertically */}
+        <Box sx={{
+          flex: 1,
+          minWidth: 340,
+          maxWidth: 500,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 5,
+          alignItems: 'stretch',
+          justifyContent: 'flex-start',
+          pt: { xs: 4, md: 0 }
+        }}>
+          {/* Results */}
+          <Box sx={{
+            mb: 2,
+            p: 3,
+            borderRadius: 4,
+            background: 'linear-gradient(135deg, #23233a 0%, #181824 100%)',
+            boxShadow: '0 2px 16px rgba(79,70,229,0.08)'
+          }}>
+            <Typography variant="h6" sx={{ color: '#f1f5f9', fontWeight: 700, mb: 2 }}>
+              Forecast Results
+            </Typography>
+            <Typography variant="subtitle1" sx={{ color: '#e5e7eb', fontWeight: 600, mb: 1 }}>
+              Storm Probability: <span style={{ color: '#60a5fa', fontWeight: 700 }}>12%</span>
+            </Typography>
+            <Typography variant="subtitle1" sx={{ color: '#e5e7eb', fontWeight: 600, mb: 1 }}>
+              Expected Loss: <span style={{ color: '#f59e0b', fontWeight: 700 }}>$24,500</span>
+            </Typography>
+            <Typography variant="subtitle1" sx={{ color: '#e5e7eb', fontWeight: 600 }}>
+              Premium: <span style={{ color: '#10b981', fontWeight: 700 }}>$2,800</span>
+            </Typography>
+          </Box>
+          {/* Chart 1 */}
+          <Box sx={{       width: '100%', maxWidth: 440, mx: 'auto', mb: 4 }}>
+            <Typography variant="h6" sx={{
+              color: '#e5e7eb',
+              fontWeight: 700,
+              mb: 2,
+              letterSpacing: 1,
+              textAlign: 'left'
+            }}>
+      
+            </Typography>
+            <ForecastCharts inputs={inputs} />
+          </Box>
+          
+            <Box sx={{
+              p: 2,
+              borderRadius: 3,
+              background: 'linear-gradient(135deg, #181824 0%, #23233a 100%)',
+              color: '#94a3b8',
+              fontWeight: 500,
+              fontSize: '1.1rem'
+            }}>
+           
+            </Box>
+          </Box>
+        </Box>
+      
     ),
     dataForecasting: (
       <Box id="dataForecasting" sx={{ py: 6 }}>
