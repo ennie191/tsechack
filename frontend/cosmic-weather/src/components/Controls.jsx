@@ -1,3 +1,4 @@
+import React from 'react'
 import { useApp } from '../context/AppContext'
 import { Box, Button, FormControl, InputLabel, MenuItem, Select, Slider, Stack, Switch, Typography } from '@mui/material'
 

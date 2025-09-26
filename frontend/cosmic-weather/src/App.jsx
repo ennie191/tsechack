@@ -1,3 +1,4 @@
+import React from 'react'
 import { useMemo } from 'react'
 import './App.css'
 import { AppProvider, useApp } from './context/AppContext'

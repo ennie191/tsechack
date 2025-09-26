@@ -1,3 +1,4 @@
+import React from 'react'
 import { useApp } from '../context/AppContext'
 import { Card, CardContent, CardHeader } from '@mui/material'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
