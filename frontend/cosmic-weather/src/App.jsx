@@ -7,7 +7,6 @@ import ForecastCharts from './components/ForecastCharts'
 import PremiumCard from './components/PremiumCard'
 import LossChart from './components/LossChart'
 import ExplainPanel from './components/ExplainPanel'
-import TelemetryUpload from './components/TelemetryUpload'
 import { AlertsPanel, AlertsToasts } from './components/Alerts'
 import { 
   Box, 
@@ -31,7 +30,6 @@ import {
   ListItemIcon,
   ListItemText,
   Divider,
-  Switch,
   Drawer
 } from '@mui/material'
 import { 
@@ -40,17 +38,14 @@ import {
   Star,
   Warning,
   Notifications,
-  DarkMode,
-  LightMode,
   Dashboard,
   Analytics,
+  MonetizationOn,
   Public,
-  Science,
-  Security,
-  Cloud,
   Menu as MenuIcon,
   Close
 } from '@mui/icons-material'
+
 
 // Enhanced Space Theme - Refined Dark Palette
 function getTheme(darkMode) {
@@ -193,8 +188,9 @@ function getTheme(darkMode) {
   })
 }
 
+
 function Shell() {
-  const { darkMode, setDarkMode, alerts, loading, error } = useApp()
+  const { darkMode, alerts, loading, error } = useApp()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [notificationsAnchor, setNotificationsAnchor] = useState(null)
   const [activeFeature, setActiveFeature] = useState('dashboard')
@@ -211,113 +207,119 @@ function Shell() {
   const handleFeatureClick = (feature) => {
     setActiveFeature(feature)
     setMobileMenuOpen(false)
+    // Scroll to correct section
+    const element = document.getElementById(feature)
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' })
+    }
   }
 
   const navigationItems = [
     { 
       id: 'dashboard', 
       icon: Dashboard, 
-      label: 'Mission Control', 
-      color: '#4f46e5',
-      component: <Grid container spacing={3}>
-        <Grid item xs={12} lg={8}>
-          <ForecastCharts />
-        </Grid>
-        <Grid item xs={12} lg={4}>
-          <Stack spacing={3}>
-            <PremiumCard />
-            <TelemetryUpload />
-          </Stack>
-        </Grid>
-      </Grid>
-    },
-    { 
-      id: 'analytics', 
-      icon: Analytics, 
-      label: 'Cosmic Analytics', 
-      color: '#7c3aed',
-      component: <Grid container spacing={3}>
-        <Grid item xs={12} lg={6}>
-          <ForecastCharts />
-        </Grid>
-        <Grid item xs={12} lg={6}>
-          <ExplainPanel />
-        </Grid>
-      </Grid>
-    },
-    { 
-      id: 'maps', 
-      icon: Public, 
-      label: 'Orbit Maps', 
-      color: '#10b981',
-      component: <Grid container spacing={3}>
-        <Grid item xs={12}>
-          <Typography variant="h4" gutterBottom>
-            Orbit Visualization
-          </Typography>
-          <Typography color="text.secondary">
-            Real-time satellite orbit tracking and space weather mapping
-          </Typography>
-        </Grid>
-      </Grid>
-    },
-    { 
-      id: 'research', 
-      icon: Science, 
-      label: 'Research Lab', 
-      color: '#f59e0b',
-      component: <Grid container spacing={3}>
-        <Grid item xs={12} lg={6}>
-          <ExplainPanel />
-        </Grid>
-        <Grid item xs={12} lg={6}>
-          <LossChart />
-        </Grid>
-      </Grid>
-    },
-    { 
-      id: 'security', 
-      icon: Security, 
-      label: 'Shield Status', 
-      color: '#f43f5e',
-      component: <Grid container spacing={3}>
-        <Grid item xs={12}>
-          <AlertsPanel />
-        </Grid>
-        <Grid item xs={12} lg={6}>
-          <PremiumCard />
-        </Grid>
-      </Grid>
-    },
-    { 
-      id: 'weather', 
-      icon: Cloud, 
-      label: 'Weather Data', 
+      label: 'Dashboard', 
       color: '#06b6d4',
-      component: <Grid container spacing={3}>
-        <Grid item xs={12}>
-          <ForecastCharts />
-        </Grid>
-        <Grid item xs={12} lg={6}>
-          <TelemetryUpload />
-        </Grid>
-      </Grid>
+    },
+    { 
+      id: 'dataForecasting', 
+      icon: Analytics, 
+      label: 'Data & Forecasting', 
+      color: '#4f46e5',
+    },
+    { 
+      id: 'riskModeling', 
+      icon: MonetizationOn, 
+      label: 'Risk & Impact Modeling', 
+      color: '#7c3aed',
+    },
+    { 
+      id: 'insurancePricing', 
+      icon: Public, 
+      label: 'Insurance Pricing', 
+      color: '#10b981',
     }
   ]
 
   const recentAlerts = alerts?.slice(0, 5) || []
-  const activeComponent = navigationItems.find(item => item.id === activeFeature)?.component
+
+  // Components to render for each section, can expand as needed
+  const sectionComponents = {
+    dashboard: (
+      <Box id="dashboard">
+        <Grid container spacing={3}>
+          {/* Forecast Charts - Left Side */}
+          <Grid item xs={12} lg={8}>
+            <ForecastCharts />
+          </Grid>
+
+          {/* Premium Card - Right Side */}
+          <Grid item xs={12} lg={4}>
+            <Stack spacing={3}>
+              <PremiumCard />
+            </Stack>
+          </Grid>
+
+          {/* Loss Chart & Explain Panel - Bottom */}
+          <Grid item xs={12} md={6}>
+            <LossChart />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <ExplainPanel />
+          </Grid>
+
+          {/* Alerts Panel - Full Width Bottom */}
+          <Grid item xs={12}>
+            <AlertsPanel />
+          </Grid>
+        </Grid>
+      </Box>
+    ),
+    dataForecasting: (
+      <Box id="dataForecasting" sx={{ py: 6 }}>
+        <Typography variant="h4" gutterBottom>
+         Data & Forecasting
+        </Typography>
+        <Typography color="text.secondary">
+          Build a model to forecast geomagnetic storm intensity and likelihood for the next 24–72 hours.
+        </Typography>
+        {/* You can add more components relevant to this section here */}
+      </Box>
+    ),
+    riskModeling: (
+      <Box id="riskModeling" sx={{ py: 6 }}>
+        <Typography variant="h4" gutterBottom>
+          Risk & Impact Modeling
+        </Typography>
+        <Typography color="text.secondary">
+          Map forecasted conditions to potential asset impact (e.g., satellite anomaly probability or expected downtime). Output a probabilistic loss distribution.
+        </Typography>
+        {/* Additional UI elements can go here */}
+      </Box>
+    ),
+    insurancePricing: (
+      <Box id="insurancePricing" sx={{ py: 6 }}>
+        <Typography variant="h4" gutterBottom>
+          Insurance Pricing
+        </Typography>
+        <Typography color="text.secondary">
+          Translate expected loss into a suggested insurance premium, clearly stating assumptions. Display confidence intervals or uncertainty bounds.
+        </Typography>
+        {/* Additional pricing components can go here */}
+      </Box>
+    )
+  }
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <AlertsToasts />
-      
+
       {/* Google Fonts */}
       <style jsx>{`
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
       `}</style>
-      
+
       {/* Navigation Bar */}
       <AppBar position="static" elevation={0}>
         <Toolbar sx={{ py: 1 }}>
@@ -642,14 +644,15 @@ function Shell() {
         </Box>
       </Drawer>
 
-      {/* Hero Section */}
+      {/* Earth Image Hero Section */}
       <Box 
         sx={{ 
           position: 'relative',
-          background: 'linear-gradient(135deg, #050507 0%, #0f0f14 30%, #1a1a22 70%, #2a2a35 100%)',
-          minHeight: '35vh',
+          background: 'linear-gradient(135deg, #000000 0%, #0a0a0a 100%)',
+          minHeight: '60vh',
           display: 'flex',
           alignItems: 'center',
+          justifyContent: 'center',
           overflow: 'hidden',
           '&::before': {
             content: '""',
@@ -659,46 +662,63 @@ function Shell() {
             right: 0,
             bottom: 0,
             background: `
-              radial-gradient(circle at 25% 75%, ${alpha('#4f46e5', 0.1)} 0%, transparent 50%),
-              radial-gradient(circle at 75% 25%, ${alpha('#7c3aed', 0.08)} 0%, transparent 50%),
-              radial-gradient(circle at 50% 50%, ${alpha('#06b6d4', 0.06)} 0%, transparent 50%)
+              radial-gradient(circle at 20% 50%, rgba(79, 70, 229, 0.1) 0%, transparent 50%),
+              radial-gradient(circle at 80% 20%, rgba(124, 58, 237, 0.05) 0%, transparent 50%),
+              radial-gradient(circle at 40% 80%, rgba(6, 182, 212, 0.08) 0%, transparent 50%)
             `,
-          },
-          '&::after': {
-            content: '""',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundImage: `
-              radial-gradient(1px 1px at 20px 30px, ${alpha('#4f46e5', 0.3)}, transparent),
-              radial-gradient(1px 1px at 40px 70px, ${alpha('#7c3aed', 0.2)}, transparent),
-              radial-gradient(1px 1px at 80px 120px, ${alpha('#06b6d4', 0.3)}, transparent),
-              radial-gradient(1px 1px at 120px 40px, ${alpha('#10b981', 0.2)}, transparent)
-            `,
-            backgroundSize: '160px 160px',
-            opacity: 0.4,
           }
         }}
       >
-        <Container maxWidth="xl" sx={{ position: 'relative', zIndex: 10, py: 6 }}>
-          <Box sx={{ textAlign: 'center', mb: 4 }}>
+        <Container maxWidth="xl" sx={{ position: 'relative', zIndex: 10, textAlign: 'center' }}>
+          {/* Earth Image Container */}
+          <Box
+            sx={{
+              width: { xs: 200, md: 300, lg: 400 },
+              height: { xs: 200, md: 300, lg: 400 },
+              margin: '0 auto 3rem auto',
+              backgroundImage: 'url("https://images.unsplash.com/photo-1446776877081-d282a0f896e2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80")',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              borderRadius: '50%',
+              boxShadow: `
+                0 0 100px rgba(79, 70, 229, 0.3),
+                0 0 200px rgba(124, 58, 237, 0.2),
+                0 0 300px rgba(6, 182, 212, 0.1),
+                inset 0 0 50px rgba(255, 255, 255, 0.1)
+              `,
+              border: '2px solid rgba(79, 70, 229, 0.3)',
+              animation: 'float 6s ease-in-out infinite',
+              position: 'relative',
+              '&::after': {
+                content: '""',
+                position: 'absolute',
+                top: -10,
+                left: -10,
+                right: -10,
+                bottom: -10,
+                borderRadius: '50%',
+                border: '1px solid rgba(79, 70, 229, 0.2)',
+                animation: 'pulse 3s ease-in-out infinite',
+              }
+            }}
+          />
+
+          {/* Hero Content */}
+          <Box sx={{ mt: 4 }}>
             <Chip 
               icon={<Satellite sx={{ color: '#f1f5f9' }} />} 
               label="SPACE WEATHER INTELLIGENCE" 
               variant="filled"
               sx={{ 
-                mb: 4,
+                mb: 3,
                 background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #06b6d4 100%)',
                 color: '#f1f5f9',
                 fontFamily: '"Space Grotesk", sans-serif',
                 fontWeight: 600,
-                fontSize: '0.9rem',
+                fontSize: { xs: '0.8rem', md: '0.9rem' },
                 py: 1.5,
                 px: 2,
                 borderRadius: 2,
-                boxShadow: '0 4px 20px rgba(79, 70, 229, 0.3)',
               }}
             />
             
@@ -708,14 +728,13 @@ function Shell() {
               sx={{
                 fontFamily: '"Space Grotesk", sans-serif',
                 fontWeight: 700,
-                fontSize: { xs: '2.5rem', md: '4.5rem', lg: '5.5rem' },
-                lineHeight: 0.9,
+                fontSize: { xs: '2.5rem', md: '3.5rem', lg: '4.5rem' },
+                lineHeight: 1.1,
                 mb: 3,
-                background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 30%, #06b6d4 70%, #10b981 100%)',
+                background: 'linear-gradient(135deg, #f1f5f9 0%, #94a3b8 100%)',
                 backgroundClip: 'text',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
-                letterSpacing: '-0.025em',
               }}
             >
               Cosmic Shield
@@ -725,11 +744,11 @@ function Shell() {
               variant="h6" 
               sx={{ 
                 color: '#94a3b8',
-                maxWidth: '640px',
+                maxWidth: '600px',
                 mx: 'auto',
                 fontWeight: 400,
                 mb: 4,
-                fontSize: '1.2rem',
+                fontSize: { xs: '1rem', md: '1.2rem' },
                 lineHeight: 1.5,
               }}
             >
@@ -749,10 +768,8 @@ function Shell() {
                 variant="outlined"
                 sx={{ 
                   color: '#f1f5f9', 
-                  borderColor: alpha('#f59e0b', 0.3),
-                  background: alpha('#f59e0b', 0.05),
-                  fontFamily: '"Space Grotesk", sans-serif',
-                  fontWeight: 500,
+                  borderColor: 'rgba(245, 158, 11, 0.3)',
+                  background: 'rgba(245, 158, 11, 0.05)',
                 }}
               />
               <Chip 
@@ -761,15 +778,18 @@ function Shell() {
                 variant="outlined"
                 sx={{ 
                   color: '#f1f5f9', 
-                  borderColor: alpha('#10b981', 0.3),
-                  background: alpha('#10b981', 0.05),
-                  fontFamily: '"Space Grotesk", sans-serif',
-                  fontWeight: 500,
+                  borderColor: 'rgba(16, 185, 129, 0.3)',
+                  background: 'rgba(16, 185, 129, 0.05)',
                 }}
               />
             </Stack>
           </Box>
+        </Container>
+      </Box>
 
+      {/* Controls Section */}
+      <Box sx={{ background: 'linear-gradient(135deg, #050507 0%, #0f0f14 100%)', py: 4 }}>
+        <Container maxWidth="xl">
           <Controls />
         </Container>
       </Box>
@@ -778,7 +798,7 @@ function Shell() {
       <Box sx={{ 
         py: 8, 
         background: 'linear-gradient(135deg, #050507 0%, #0f0f14 100%)',
-        minHeight: '65vh'
+        minHeight: '70vh'
       }}>
         <Container maxWidth="xl">
           {error && (
@@ -820,8 +840,29 @@ function Shell() {
             />
           )}
 
-          {/* Dynamic Content based on selected feature */}
-          {activeComponent}
+          {/* Dashboard Section Description */}
+          {activeFeature === 'dashboard' && (
+            <Box sx={{ mb: 6 }}>
+              <Typography variant="h4" gutterBottom sx={{ 
+                background: 'linear-gradient(135deg, #06b6d4 0%, #4f46e5 100%)',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                mb: 3
+              }}>
+              
+              </Typography>
+              <Typography variant="h6" color="text.secondary" paragraph>
+                Provide an easy-to-use dashboard or API where an operator can enter asset details (orbit, shielding, value) and instantly view:
+              </Typography>
+              <ul style={{ color: '#94a3b8', fontSize: '1.1rem', lineHeight: '1.8' }}>
+               
+              </ul>
+            </Box>
+          )}
+
+          {/* Render the selected section's component */}
+          {sectionComponents[activeFeature]}
         </Container>
       </Box>
 
@@ -854,6 +895,18 @@ function Shell() {
           100% { 
             transform: scale(1); 
             opacity: 1; 
+          }
+        }
+
+        @keyframes float {
+          0% { 
+            transform: translateY(0px) rotate(0deg);
+          }
+          50% { 
+            transform: translateY(-20px) rotate(2deg);
+          }
+          100% { 
+            transform: translateY(0px) rotate(0deg);
           }
         }
 
