@@ -720,12 +720,15 @@ function Shell() {
     boxShadow: '0 4px 20px rgba(79, 70, 229, 0.4)',
   }}
   onClick={() => {
-    // Add desired onClick handler here, e.g., navigation or modal open
-    console.log('Get Started clicked');
+    const element = document.getElementById('dashboard');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
   }}
 >
   Get Started
 </Button>
+
             
             <Typography 
               variant="h2" 
