@@ -470,7 +470,7 @@ function Shell() {
       `}</style>
 
       {/* Navigation Bar */}
-      <AppBar position="static" elevation={0}>
+      <AppBar position="sticky" elevation={0}>
         <Toolbar sx={{ py: 1 }}>
           {/* Logo */}
           <Stack direction="row" alignItems="center" spacing={2} sx={{ flexGrow: 1 }}>
@@ -854,22 +854,30 @@ function Shell() {
 
           {/* Hero Content */}
           <Box sx={{ mt: 4 }}>
-            <Chip 
-              icon={<Satellite sx={{ color: '#f1f5f9' }} />} 
-              label="SPACE WEATHER INTELLIGENCE" 
-              variant="filled"
-              sx={{ 
-                mb: 3,
-                background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #06b6d4 100%)',
-                color: '#f1f5f9',
-                fontFamily: '"Space Grotesk", sans-serif',
-                fontWeight: 600,
-                fontSize: { xs: '0.8rem', md: '0.9rem' },
-                py: 1.5,
-                px: 2,
-                borderRadius: 2,
-              }}
-            />
+            <Button 
+  variant="contained" 
+  color="primary" 
+  sx={{ 
+    mb: 3,
+    fontFamily: '"Space Grotesk", sans-serif',
+    fontWeight: 600,
+    fontSize: { xs: '0.9rem', md: '1rem' },
+    py: 1.5,
+    px: 4,
+    borderRadius: 2,
+    textTransform: 'none',
+    boxShadow: '0 4px 20px rgba(79, 70, 229, 0.4)',
+  }}
+  onClick={() => {
+    const element = document.getElementById('dashboard');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  }}
+>
+  Get Started
+</Button>
+
             
             <Typography 
               variant="h2" 
